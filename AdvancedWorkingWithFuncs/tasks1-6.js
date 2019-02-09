@@ -37,3 +37,34 @@ let f1000 = delay(f, 1000);
 let f1500 = delay(f, 1500);
 f1000.call(obj1, "test1"); // shows "test" after 1000ms
 f1500("test2"); // shows "test" after 1500ms
+
+
+//Debounce Decorator
+
+/*debounce will take a func and ms 
+it will return a decorated func
+which couldn't be called in earlier than ms time from its last run */
+function debounce(fn, ms){
+  let startTime = 0;
+  return function(){
+    if (!startTime){ //run in the first call
+      fn.apply(null, arguments);
+      startTime = Date.now();
+    }
+    else if (Date.now() - startTime >= ms){ //check if ms amount time passed from the last call
+      fn.apply(null, arguments);
+      startTime = Date.now();
+    }
+    else {
+      return;
+    }
+  } 
+}
+let f = debounce(alert, 1000);
+
+f(1); // runs immediately
+f(2); // ignored
+
+setTimeout( () => f(3), 100); // ignored ( only 100 ms passed )
+setTimeout( () => f(4), 1100); // runs
+setTimeout( () => f(5), 2100); // runs 
