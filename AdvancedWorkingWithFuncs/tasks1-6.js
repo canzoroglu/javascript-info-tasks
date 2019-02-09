@@ -68,3 +68,36 @@ f(2); // ignored
 setTimeout( () => f(3), 100); // ignored ( only 100 ms passed )
 setTimeout( () => f(4), 1100); // runs
 setTimeout( () => f(5), 2100); // runs 
+
+
+//Throttle Decorator
+
+//This decorator similar to previous one
+//But last ignored call will be called after ms amount of time passed
+function throttle(fn, ms){
+  let isCoolDown = false;
+  let prevArg, prevThis;
+  return function bounced(){
+    if (isCoolDown){
+      prevArg = arguments;
+      prevThis = this
+      return;
+    }
+    fn.apply(this, arguments);
+    isCoolDown = true;
+    setTimeout(() => {
+      isCoolDown = false;
+      if (prevArg) {
+        bounced.apply(prevThis, prevArg);
+        prevArg = prevThis = null;
+        }
+    }, ms);
+ }
+}
+let f1000 = throttle(alert, 1000);
+f1000(1); // shows 1
+f1000(2); // (throttling, 1000ms not out yet)
+f1000(3); // (throttling, 1000ms not out yet)
+
+
+//------End of "Decorators and forwarding, call/apply"-------
